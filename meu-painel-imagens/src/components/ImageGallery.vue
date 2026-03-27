@@ -1,28 +1,22 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { useImageStore } from '@/stores/imageStore';
 
-type ImageStatus = 'pending' | 'processing' | 'completed' | 'error';
-
-interface ProcessingImage {
-    file: string;
-    status: ImageStatus;
-}
-
-const images = reactive<Record<string, ProcessingImage>>({
-    'img1': { file: 'image1.jpg', status: 'pending' },
-    'img2': { file: 'image2.jpg', status: 'completed' },
-    'img3': { file: 'image3.jpg', status: 'processing' },
-});
+const imageStore = useImageStore();
 </script>
 
 <template>
-    <div class="gallery">
-        <h2>Minha Galeria</h2>
+    <div class="gallery-container">
+        <h2>Minha Galeria Global</h2>
+        <p>Imagens Concluídas: {{ imageStore.totalCompleted }}</p>
 
-        <div v-for="(image, id) in images" :key="id" class="card">
-            <p><strong>Arquivo:</strong>{{ image.file }}</p>
-            <p><strong>Status:</strong>{{ image.status }}</p>
-            <p><strong>ID:</strong>{{ id }}</p>
+        <div class="gallery">
+            <div v-for="(image, id) in imageStore.images" :key="id" class="card">
+                <p><strong>Arquivo:</strong>{{ image.file }}</p>
+                <p><strong>Status:</strong>{{ image.status }}</p>
+                <p><strong>ID:</strong>{{ id }}</p>
+
+                <button @click="imageStore.updateImageStatus(id, 'completed')">Marcar como Concluído</button>
+            </div>
         </div>
     </div>
 </template>
@@ -39,5 +33,14 @@ const images = reactive<Record<string, ProcessingImage>>({
     padding: 1rem;
     border-radius: 8px;
     background-color: #f9f9f9;
+}
+
+button {
+  cursor: pointer;
+  padding: 8px;
+  background-color: #2b772e;
+  color: white;
+  border: none;
+  border-radius: 4px;
 }
 </style>
