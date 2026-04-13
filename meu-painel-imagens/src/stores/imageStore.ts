@@ -12,19 +12,21 @@ export const useImageStore = defineStore("imageStore", () => {
     
     const images = reactive<Record<string, ProcessingImage>>({
         'img1': {file: 'image1.jpg', status: 'pending'},
-        'img2': {file: 'image2.jpg', status: 'completed'},
-        'img3': {file: 'image3.jpg', status: 'processing'},
+        'img2': {file: 'image2.jpg', status: 'pending'},
+        'img3': {file: 'image3.jpg', status: 'pending'},
     })
 
     const totalCompleted = computed(() => {
         return Object.values(images).filter(img => img.status === 'completed').length;
     })
 
-    function updateImageStatus(id: string, newStatus: ImageStatus) {
-        if (images[id]) {
-            images[id].status = newStatus;
-        }
+    async function processImage(id: string) {
+        if (images[id]?.status !== 'pending') return;
+
+        images[id].status = 'processing';
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        images[id].status = 'completed';
     }
 
-    return {images, totalCompleted, updateImageStatus};
+    return {images, totalCompleted, processImage};
 })
