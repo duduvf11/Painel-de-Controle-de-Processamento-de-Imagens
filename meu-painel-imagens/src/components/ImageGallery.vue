@@ -2,6 +2,20 @@
 import { useImageStore } from '@/stores/imageStore';
 
 const imageStore = useImageStore();
+
+const formatStatus = (status: string) => {
+    switch (status) {
+        case 'pending':
+            return 'Pendente';
+        case 'processing':
+            return 'Processando';
+        case 'completed':
+            return 'Concluído';
+        default:
+            return status;
+    }
+}
+
 </script>
 
 <template>
@@ -12,10 +26,19 @@ const imageStore = useImageStore();
         <div class="gallery">
             <div v-for="(image, id) in imageStore.images" :key="id" class="card">
                 <p><strong>Arquivo:</strong>{{ image.file }}</p>
-                <p><strong>Status:</strong>{{ image.status }}</p>
+                <p><strong>Status:</strong>{{ formatStatus(image.status) }}</p>
                 <p><strong>ID:</strong>{{ id }}</p>
 
-                <button @click="imageStore.updateImageStatus(id, 'completed')">Marcar como Concluído</button>
+                <button @click="imageStore.processImage(String(id))"
+                        :disabled="image.status !== 'pending'"
+                        :class="{ 'processing-btn': image.status === 'processing' }"
+                >
+                    {{ 
+                        image.status === 'pending' ? 'Iniciar Processamento' : 
+                        image.status === 'processing' ? 'Processando (Aguarde)...' : 
+                        'Finalizado' 
+                    }}
+                </button>
             </div>
         </div>
     </div>
