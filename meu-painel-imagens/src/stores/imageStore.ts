@@ -28,5 +28,11 @@ export const useImageStore = defineStore("imageStore", () => {
         images[id].status = 'completed';
     }
 
-    return {images, totalCompleted, processImage};
+    function addImage(fileName: string) {
+        const newId = crypto.randomUUID();
+        
+        images[newId] = { file: fileName, status: 'pending' };
+    }
+
+    return {images, totalCompleted, processImage, addImage};
 })
